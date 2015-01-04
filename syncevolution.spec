@@ -1,5 +1,4 @@
-%global export CC=gcc
-%global export CXX=g++
+
 
 %define _libexecdir /usr/libexec
 %define _disable_ld_no_undefined 1
@@ -138,6 +137,10 @@ sed -i '/^ACLOCAL_AMFLAGS/{ /m4-repo/!s/$/ -I m4-repo/ }' Makefile*.am
 intltoolize --automake --copy --force
 autoreconf -fiv
 (cd src/synthesis && autoreconf -fi && ./autogen.sh)
+
+export CC=gcc
+export CXX=g++
+
 
 %configure2_5x --enable-libsoup --enable-dbus-service --enable-shared --with-expat=system \
     --disable-static --enable-gtk=3 --enable-gui --with-gio-gdbus --enable-dav --enable-bluetooth \
