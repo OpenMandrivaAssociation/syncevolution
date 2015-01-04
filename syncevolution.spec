@@ -1,3 +1,6 @@
+%global export CC=gcc
+%global export CXX=g++
+
 %define _libexecdir /usr/libexec
 %define _disable_ld_no_undefined 1
 
@@ -49,6 +52,7 @@ BuildRequires: intltool
 BuildRequires: gettext
 BuildRequires: libtool
 BuildRequires: xsltproc
+BuildRequires:	gcc-c++, gcc, gcc-cpp
 
 Requires: python-twisted-web
 Requires: %{name}-backends
