@@ -1,0 +1,6 @@
+addFilter("E: devel-file-in-non-devel-package")
+addFilter("E: shared-lib-without-dependency-information")
+addFilter("W: no-manual-page-for-binary")
+addFilter("W: summary-not-capitalized")
+addFilter("W: only-non-binary-in-usr-lib")
+addFilter("W: not-standard-release-extension")

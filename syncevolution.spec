@@ -24,6 +24,7 @@ License:       LGPLv2+
 Group:         Networking/Remote access 
 URL:           http://syncevolution.org/
 Source0:       http://downloads.syncevolution.org/%{name}/sources/%{name}-%{version}.tar.gz
+Source100:	syncevolution.rpmlintrc
 BuildRequires: kdepimlibs4-devel
 BuildRequires: pkgconfig(bluez)
 BuildRequires: boost-devel
