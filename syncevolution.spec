@@ -51,8 +51,9 @@ BuildRequires: intltool
 BuildRequires: gettext
 BuildRequires: libtool
 BuildRequires: xsltproc
-BuildRequires: python2-pygments
-BuildRequires: python2-distribute
+BuildRequires: python-pygments
+BuildRequires: python-distribute
+BuildRequires: pkgconfig(python)
 BuildRequires:	gcc-c++, gcc, gcc-cpp
 
 Requires: python2-twisted-web
