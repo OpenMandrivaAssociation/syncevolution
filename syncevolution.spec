@@ -136,6 +136,8 @@ find . -name "*.c" -o -name "*.h" -o -name "*.cpp" |xargs chmod 0644
 # use the ac macros in Makefile.am
 sed -i '/^ACLOCAL_AMFLAGS/{ /m4-repo/!s/$/ -I m4-repo/ }' Makefile*.am
 
+find . -name "*.py" |xargs 2to3 -w
+
 %build
 intltoolize --automake --copy --force
 autoreconf -fiv
