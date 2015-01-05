@@ -51,10 +51,11 @@ BuildRequires: intltool
 BuildRequires: gettext
 BuildRequires: libtool
 BuildRequires: xsltproc
-BuildRequires: python-pygments
+BuildRequires: python2-pygments
+BuildRequires: python2-distribute
 BuildRequires:	gcc-c++, gcc, gcc-cpp
 
-Requires: python-twisted-web
+Requires: python2-twisted-web
 Requires: %{name}-backends
 
 %description
@@ -161,7 +162,7 @@ rm -rf %{buildroot}%{_datadir}/doc
 %find_lang %{name}
 
 %files -f %{name}.lang
-%doc AUTHORS NEWS README HACKING README.html README.rst
+%doc AUTHORS NEWS README HACKING README.rst
 %{_sysconfdir}/xdg/autostart/syncevo-dbus-server.desktop
 %{_bindir}/syncevolution
 %{_bindir}/syncevo-http-server
@@ -174,7 +175,7 @@ rm -rf %{buildroot}%{_datadir}/doc
 %{_libexecdir}/syncevo-local-sync
 %{_datadir}/syncevolution
 %{_datadir}/dbus-1/services/org.syncevolution.service
-#%%{_mandir}/man1/syncevolution.1*
+%{_mandir}/man1/syncevolution.1*
 %exclude %{_datadir}/syncevolution/xml/*.pl
 
 %files backends
