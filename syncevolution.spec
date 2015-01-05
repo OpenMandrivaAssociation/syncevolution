@@ -174,7 +174,7 @@ rm -rf %{buildroot}%{_datadir}/doc
 %{_libexecdir}/syncevo-local-sync
 %{_datadir}/syncevolution
 %{_datadir}/dbus-1/services/org.syncevolution.service
-%{_mandir}/man1/syncevolution.1*
+#%%{_mandir}/man1/syncevolution.1*
 %exclude %{_datadir}/syncevolution/xml/*.pl
 
 %files backends
