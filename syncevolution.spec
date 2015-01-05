@@ -57,7 +57,7 @@ BuildRequires: python-distribute
 BuildRequires: pkgconfig(python)
 BuildRequires:	gcc-c++, gcc, gcc-cpp
 
-Requires: python2-twisted-web
+Requires: python-twisted-web2
 Requires: %{name}-backends
 
 %description
