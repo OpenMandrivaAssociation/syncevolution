@@ -19,7 +19,7 @@
 Summary:       SyncML client for evolution
 Name:          syncevolution
 Version:       1.4.1
-Release:       1
+Release:       2
 License:       LGPLv2+
 Group:         Networking/Remote access 
 URL:           http://syncevolution.org/
