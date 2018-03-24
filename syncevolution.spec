@@ -2,6 +2,7 @@
 
 %define _libexecdir /usr/libexec
 %define _disable_ld_no_undefined 1
+%define _disable_rebuild_configure 1
 
 %define gdbussyncevo_major 0
 %define gdbussyncevo_libname %mklibname gdbussyncevo %gdbussyncevo_major
@@ -18,21 +19,21 @@
 
 Summary:       SyncML client for evolution
 Name:          syncevolution
-Version:       1.4.1
-Release:       2
+Version:       1.5.3
+Release:       1
 License:       LGPLv2+
 Group:         Networking/Remote access 
 URL:           http://syncevolution.org/
 Source0:       http://downloads.syncevolution.org/%{name}/sources/%{name}-%{version}.tar.gz
 Source100:	syncevolution.rpmlintrc
-BuildRequires: kdepimlibs4-devel
+Patch1:		syncevolution-1.5.1-libical2.patch
 BuildRequires: pkgconfig(bluez)
 BuildRequires: boost-devel
 BuildRequires: pkgconfig(cppunit)
 BuildRequires: pkgconfig(libedataserver-1.2)
 BuildRequires: pkgconfig(expat)
 BuildRequires: pkgconfig(glib-2.0)
-BuildRequires: pkgconfig(gnome-keyring-1)
+BuildRequires: pkgconfig(libsecret-1)
 BuildRequires: pkgconfig(gtk+-3.0)
 BuildRequires: pkgconfig(libcurl)
 BuildRequires: pkgconfig(libical)
@@ -52,6 +53,7 @@ BuildRequires: intltool
 BuildRequires: gettext
 BuildRequires: libtool
 BuildRequires: xsltproc
+BuildRequires:	python-docutils
 BuildRequires: python-pygments
 BuildRequires: python-distribute
 BuildRequires: pkgconfig(python)
@@ -132,6 +134,8 @@ Perl utils for use with %{name}.
 
 %prep
 %setup -q
+%apply_patches
+
 find . -name "*.c" -o -name "*.h" -o -name "*.cpp" |xargs chmod 0644
 
 # use the ac macros in Makefile.am
@@ -150,13 +154,13 @@ export CXX=g++
 
 %configure2_5x --enable-libsoup --enable-dbus-service --enable-shared --with-expat=system \
     --disable-static --enable-gtk=3 --enable-gui --with-gio-gdbus --enable-dav --enable-bluetooth \
-    --enable-akonadi --enable-gnomebluetooth
+    --disable-akonadi --enable-gnomebluetooth
 
 
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g
         s|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
-make
+%make
 find . -type d -perm 02755 -exec chmod 0755 '{}' \;
 
 %install
@@ -179,7 +183,8 @@ rm -rf %{buildroot}%{_datadir}/doc
 %{_libexecdir}/syncevo-local-sync
 %{_datadir}/syncevolution
 %{_datadir}/dbus-1/services/org.syncevolution.service
-#%%{_mandir}/man1/syncevolution.1*
+%{_userunitdir}/syncevo-dbus-server.service
+%{_mandir}/man1/syncevolution.1*
 %exclude %{_datadir}/syncevolution/xml/*.pl
 
 %files backends

@@ -1,2 +1,4 @@
-sources:
+removed_sources:
   syncevolution-1.4.1.tar.gz: c099bd2b8a1222d4c94b0734994ff6873c2ef870
+sources:
+  syncevolution-1.5.3.tar.gz: f6d51e5af8d87888ebf4a3ceae14230a7dab078e
