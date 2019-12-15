@@ -1,4 +1,4 @@
-
+%define _disable_lto 1
 
 %define _libexecdir /usr/libexec
 %define _disable_ld_no_undefined 1
