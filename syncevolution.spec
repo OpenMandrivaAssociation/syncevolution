@@ -62,6 +62,7 @@ BuildRequires: python-pygments
 BuildRequires: python-distribute
 BuildRequires: pkgconfig(python)
 BuildRequires:	gcc-c++, gcc, gcc-cpp
+BuildRequires:  pkgconfig(Qt5DBus)
 
 Requires: python-twisted-web2
 Requires: %{name}-backends
