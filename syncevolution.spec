@@ -26,7 +26,10 @@ Group:         Networking/Remote access
 URL:           http://syncevolution.org/
 Source0:       http://downloads.syncevolution.org/%{name}/sources/%{name}-%{version}.tar.gz
 Source100:	syncevolution.rpmlintrc
-Patch1:		syncevolution-1.5.1-libical2.patch
+Patch1:	       syncevolution-1.5.1-libical2.patch
+Patch2:        syncevolution-1.5.3-eds-libecal-2.0.patch
+Patch3:        syncevolution-1.5.3-python3.patch
+
 BuildRequires: pkgconfig(bluez)
 BuildRequires: boost-devel
 BuildRequires: pkgconfig(cppunit)
@@ -161,11 +164,11 @@ export CXX=g++
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g
         s|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
-%make
+%make_build
 find . -type d -perm 02755 -exec chmod 0755 '{}' \;
 
 %install
-%makeinstall_std
+%make_install
 rm -rf %{buildroot}%{_datadir}/doc
 
 %find_lang %{name}
