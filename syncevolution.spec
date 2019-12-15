@@ -47,7 +47,7 @@ BuildRequires: pkgconfig(openobex)
 BuildRequires: pkgconfig(libebook-1.2)
 BuildRequires: desktop-file-utils
 #BuildRequires: libtlen-devel
-BuildRequires: pkgconfig(libecal-1.2)
+BuildRequires: pkgconfig(libecal-2.0)
 BuildRequires: pkgconfig(gnome-bluetooth-1.0)
 BuildRequires: intltool
 BuildRequires: gettext
