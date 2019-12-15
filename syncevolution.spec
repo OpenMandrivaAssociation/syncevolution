@@ -139,14 +139,10 @@ Perl utils for use with %{name}.
 
 %prep
 %setup -q
-%apply_patches
-
-find . -name "*.c" -o -name "*.h" -o -name "*.cpp" |xargs chmod 0644
+%autopatch -p1
 
 # use the ac macros in Makefile.am
 sed -i '/^ACLOCAL_AMFLAGS/{ /m4-repo/!s/$/ -I m4-repo/ }' Makefile*.am
-
-find . -name "*.py" |xargs 2to3 -w
 
 %build
 intltoolize --automake --copy --force
@@ -165,8 +161,9 @@ export CXX=g++
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g
         s|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
-%make_build
+%make_build V=1
 find . -type d -perm 02755 -exec chmod 0755 '{}' \;
+
 
 %install
 %make_install
