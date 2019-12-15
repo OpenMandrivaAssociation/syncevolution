@@ -64,7 +64,7 @@ BuildRequires: pkgconfig(python)
 BuildRequires:	gcc-c++, gcc, gcc-cpp
 BuildRequires:  pkgconfig(Qt5DBus)
 
-Requires: python-twisted-web2
+Requires: python3dist(twisted)
 Requires: %{name}-backends
 
 %description
@@ -149,14 +149,12 @@ intltoolize --automake --copy --force
 autoreconf -fiv
 (cd src/synthesis && autoreconf -fi && ./autogen.sh)
 
-export CC=gcc
-export CXX=g++
-
+#export CC=gcc
+#export CXX=g++
 
 %configure2_5x --enable-libsoup --enable-dbus-service --enable-shared --with-expat=system \
     --disable-static --enable-gtk=3 --enable-gui --with-gio-gdbus --enable-dav --enable-bluetooth \
     --disable-akonadi --enable-gnomebluetooth
-
 
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g
         s|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
