@@ -30,6 +30,7 @@ Patch1:		syncevolution-1.5.1-libical2.patch
 BuildRequires: pkgconfig(bluez)
 BuildRequires: boost-devel
 BuildRequires: pkgconfig(cppunit)
+BuileRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(libedataserver-1.2)
 BuildRequires: pkgconfig(expat)
 BuildRequires: pkgconfig(glib-2.0)
