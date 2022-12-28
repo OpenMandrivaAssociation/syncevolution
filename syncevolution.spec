@@ -27,7 +27,7 @@ URL:           http://syncevolution.org/
 Source0:       http://downloads.syncevolution.org/%{name}/sources/%{name}-%{version}.tar.gz
 Source100:	syncevolution.rpmlintrc
 Patch1:	       syncevolution-1.5.1-libical2.patch
-Patch2:        syncevolution-1.5.3-eds-libecal-2.0.patch
+#Patch2:        syncevolution-1.5.3-eds-libecal-2.0.patch
 Patch3:        syncevolution-1.5.3-python3.patch
 
 BuildRequires: pkgconfig(bluez)
