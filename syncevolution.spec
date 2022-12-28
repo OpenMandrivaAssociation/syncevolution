@@ -143,9 +143,9 @@ Perl utils for use with %{name}.
 sed -i '/^ACLOCAL_AMFLAGS/{ /m4-repo/!s/$/ -I m4-repo/ }' Makefile*.am
 
 %build
-intltoolize --automake --copy --force
-autoreconf -fiv
-(cd src/synthesis && autoreconf -fi && ./autogen.sh)
+#intltoolize --automake --copy --force
+#autoreconf -fiv
+#(cd src/synthesis && autoreconf -fi && ./autogen.sh)
 
 #export CC=gcc
 #export CXX=g++
