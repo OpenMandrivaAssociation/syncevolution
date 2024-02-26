@@ -25,13 +25,12 @@ License:       LGPLv2+
 Group:         Networking/Remote access 
 URL:           http://syncevolution.org/
 Source0:       http://downloads.syncevolution.org/%{name}/sources/%{name}-%{version}.tar.gz
-Source100:	syncevolution.rpmlintrc
+Source100:     syncevolution.rpmlintrc
 Patch1:	       syncevolution-1.5.1-libical2.patch
 Patch2:        syncevolution-1.5.3-autoconf-2.71.patch
 Patch3:        003-pcre2.patch
 Patch4:        004-cpp-curl.patch
-Patch5:		syncevolution-2.0.0-clang.patch
-
+Patch5:        syncevolution-2.0.0-clang.patch
 BuildRequires: pkgconfig(bluez)
 BuildRequires: boost-devel
 BuildRequires: pkgconfig(cppunit)
@@ -45,7 +44,7 @@ BuildRequires: pkgconfig(libcurl)
 BuildRequires: pkgconfig(libical)
 BuildRequires: pkgconfig(libnotify)
 BuildRequires: pkgconfig(neon)
-BuildRequires: pkgconfig(libpcre)
+BuildRequires: pkgconfig(libpcre2-8)
 BuildRequires: pkgconfig(unique-1.0)
 BuildRequires: pkgconfig(openobex)
 BuildRequires: pkgconfig(libebook-1.2)
@@ -56,12 +55,13 @@ BuildRequires: intltool
 BuildRequires: gettext
 BuildRequires: libtool
 BuildRequires: xsltproc
-BuildRequires:	python-docutils
+BuildRequires: python-docutils
 BuildRequires: python-pygments
 BuildRequires: python-distribute
 BuildRequires: pkgconfig(python)
-BuildRequires:	gcc-c++, gcc, gcc-cpp
-BuildRequires:  pkgconfig(Qt5DBus)
+BuildRequires: gcc-c++
+BuildRequires: gcc
+BuildRequires: gcc-cpp
 
 Requires: python3dist(twisted)
 Requires: %{name}-backends
