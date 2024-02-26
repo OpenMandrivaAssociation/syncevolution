@@ -1,0 +1,13 @@
+diff -up syncevolution-1.5.3/configure.ac.autoconf-2.71 syncevolution-1.5.3/configure.ac
+--- syncevolution-1.5.3/configure.ac.autoconf-2.71	2021-03-26 09:53:25.470000000 +0100
++++ syncevolution-1.5.3/configure.ac	2021-03-26 09:53:37.859000000 +0100
+@@ -670,8 +670,8 @@ DBUS_SERVICES_DIR="${datadir}/dbus-1/ser
+ AC_SUBST(DBUS_SERVICES_DIR)
+ AC_DEFINE_UNQUOTED(DBUS_SERVICES_DIR, "$DBUS_SERVICES_DIR", [Location of D-Bus services directory])
+ 
++IT_PROG_INTLTOOL([0.37.1])
+ if test "$enable_gui" != "no" || test "$enable_dbus_service" != "no"; then
+-    IT_PROG_INTLTOOL([0.37.1])
+     GETTEXT_PACKAGE=syncevolution
+     AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [The gettext package name])
+     AM_GLIB_GNU_GETTEXT

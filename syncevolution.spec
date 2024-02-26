@@ -19,7 +19,7 @@
 
 Summary:       SyncML client for evolution
 Name:          syncevolution
-Version:       1.5.3
+Version:       2.0.0
 Release:       1
 License:       LGPLv2+
 Group:         Networking/Remote access 
@@ -27,8 +27,10 @@ URL:           http://syncevolution.org/
 Source0:       http://downloads.syncevolution.org/%{name}/sources/%{name}-%{version}.tar.gz
 Source100:	syncevolution.rpmlintrc
 Patch1:	       syncevolution-1.5.1-libical2.patch
-Patch2:        syncevolution-1.5.3-eds-libecal-2.0.patch
-Patch3:        syncevolution-1.5.3-python3.patch
+Patch2:        syncevolution-1.5.3-autoconf-2.71.patch
+Patch3:        003-pcre2.patch
+Patch4:        004-cpp-curl.patch
+Patch5:		syncevolution-2.0.0-clang.patch
 
 BuildRequires: pkgconfig(bluez)
 BuildRequires: boost-devel
@@ -42,17 +44,14 @@ BuildRequires: pkgconfig(gtk+-3.0)
 BuildRequires: pkgconfig(libcurl)
 BuildRequires: pkgconfig(libical)
 BuildRequires: pkgconfig(libnotify)
-BuildRequires: pkgconfig(libsoup-2.4)
 BuildRequires: pkgconfig(neon)
 BuildRequires: pkgconfig(libpcre)
-BuildRequires: pythonegg(docutils)
 BuildRequires: pkgconfig(unique-1.0)
 BuildRequires: pkgconfig(openobex)
 BuildRequires: pkgconfig(libebook-1.2)
 BuildRequires: desktop-file-utils
 #BuildRequires: libtlen-devel
 BuildRequires: pkgconfig(libecal-2.0)
-BuildRequires: pkgconfig(gnome-bluetooth-1.0)
 BuildRequires: intltool
 BuildRequires: gettext
 BuildRequires: libtool
@@ -138,23 +137,29 @@ Requires: %{name} = %{EVRD}
 Perl utils for use with %{name}.
 
 %prep
-%setup -q
-%autopatch -p1
+%autosetup -p1
 
 # use the ac macros in Makefile.am
 sed -i '/^ACLOCAL_AMFLAGS/{ /m4-repo/!s/$/ -I m4-repo/ }' Makefile*.am
 
 %build
+autoupdate
 intltoolize --automake --copy --force
 autoreconf -fiv
-(cd src/synthesis && autoreconf -fi && ./autogen.sh)
 
-#export CC=gcc
-#export CXX=g++
+pushd src/synthesis
+autoupdate
+autoreconf -fi
+./autogen.sh
+popd
 
-%configure2_5x --enable-libsoup --enable-dbus-service --enable-shared --with-expat=system \
-    --disable-static --enable-gtk=3 --enable-gui --with-gio-gdbus --enable-dav --enable-bluetooth \
-    --disable-akonadi --enable-gnomebluetooth
+export CC=gcc
+export CXX=g++
+
+%configure --enable-libcurl --disable-libsoup --enable-dbus-service --enable-shared \
+    --disable-static --enable-gtk=3 --enable-gui --enable-dav --enable-bluetooth \
+    --disable-akonadi --enable-signon=no --enable-goa=no \
+    --with-expat=system
 
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g
         s|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool

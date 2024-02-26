@@ -1,0 +1,10 @@
+--- syncevolution-2.0.0/src/synthesis/src/synthesis-linker.map.orig	2024-02-26 12:39:48.641167651 +0000
++++ syncevolution-2.0.0/src/synthesis/src/synthesis-linker.map	2024-02-26 12:39:51.710066068 +0000
+@@ -5,7 +5,6 @@
+         SySync_*DisconnectEngine;
+         SySync_*ConsolePrintf;
+         SySync_CondTimedWait;
+-        SySync_CondWait;
+         extern "C++" {
+                sysync::DataConversion*;
+                sysync::SySyncDebugPuts*;

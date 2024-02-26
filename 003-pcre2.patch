@@ -1,0 +1,179 @@
+diff -up syncevolution-2.0.0/autom4te.cache/output.3 syncevolution-2.0.0/autom4te.cache/output
+diff -up syncevolution-2.0.0/autom4te.cache/traces.3 syncevolution-2.0.0/autom4te.cache/traces
+diff -up syncevolution-2.0.0/src/synthesis/configure.in.3 syncevolution-2.0.0/src/synthesis/configure.in
+--- syncevolution-2.0.0/src/synthesis/configure.in.3	2021-02-06 14:57:16.000000000 +0100
++++ syncevolution-2.0.0/src/synthesis/configure.in	2022-09-21 08:08:02.886267900 +0200
+@@ -2,15 +2,18 @@ dnl Invoke autogen.sh to produce a confi
+ 
+ # four digit upstream version, one additional digit for
+ # Linux/SyncEvolution specific extensions:
+-AC_INIT([synthesis], [3.4.0.47.5])
++AC_INIT([synthesis],[3.4.0.47.5])
+ AM_INIT_AUTOMAKE(subdir-objects)
+ AC_CONFIG_MACRO_DIR([m4])
+ AM_CONFIG_HEADER(config.h)
+-AC_LIBTOOL_DLOPEN
++_LT_SET_OPTION([LT_INIT],[dlopen])
++m4_warn([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
++put the 'dlopen' option into LT_INIT's first parameter.])
++
+ 
+ dnl check for programs.
+ AC_PROG_CXX
+-AC_PROG_LIBTOOL
++LT_INIT
+ AC_PROG_MAKE_SET
+ AM_PROG_CC_C_O
+ 
+@@ -70,9 +73,9 @@ AC_ARG_ENABLE(regex,
+               [enable_regex=$enableval],
+               [enable_regex="yes"])
+ if test "$enable_regex" == "yes"; then
+-    PKG_CHECK_MODULES(PCRE, libpcre,
++    PKG_CHECK_MODULES(PCRE, libpcre2-8,
+                       [HAVE_PCRE=1],
+-                      [AC_ERROR([libpcre not found, required for --enable-regex])])
++                      [AC_MSG_ERROR(libpcre2 not found, required for --enable-regex)])
+     HAVE_PCRE=1
+ else
+     HAVE_PCRE=0
+@@ -83,16 +86,16 @@ AC_ARG_ENABLE(dlt,
+               AS_HELP_STRING([--enable-dlt],
+                              [enable logging mode "dlt" = GENIVI Diagnostic Log and Trace]),
+               [enable_dlt=$enableval
+-               test $enable_dlt = "yes" || test $enable_dlt = "no" || AC_ERROR([invalid value of --enable-dlt: $enableval])],
++               test $enable_dlt = "yes" || test $enable_dlt = "no" || AC_MSG_ERROR(invalid value of --enable-dlt: $enableval)],
+               [enable_dlt="no"])
+ if test "$enable_dlt" = "yes"; then
+     PKG_CHECK_MODULES(DLT, automotive-dlt,
+                       [USE_DLT=1],
+-                      [AC_ERROR([dlt not found, required for --enable-dlt])])
++                      [AC_MSG_ERROR(dlt not found, required for --enable-dlt)])
+     AC_DEFINE(USE_DLT, 1, "optionally use GENIVI Diagnostic Log and Trace for logging")
+ fi
+ 
+-AC_CHECK_HEADER(zlib.h, , [AC_ERROR(zlib.h not found.)])
++AC_CHECK_HEADER(zlib.h, , [AC_MSG_ERROR(zlib.h not found.)])
+ AC_CHECK_HEADER(xmltok/xmlparse.h, have_system_xmltok="yes")
+ AC_CHECK_HEADER(expat.h, have_system_expat="yes")
+ 
+@@ -116,7 +119,7 @@ if test "$enable_libical" == "yes"; then
+                                             [AC_DEFINE(USE_ICALTZUTIL_SET_EXACT_VTIMEZONES_SUPPORT, 1, "Use icaltzutil_set_exact_vtimezones_support() to enable interoperable timezone definitions.")],
+                                             [true])
+                       fi],
+-                     [AC_ERROR([libical not found, required for --enable-libical])])
++                     [AC_MSG_ERROR(libical not found, required for --enable-libical)])
+ fi
+ 
+ AC_ARG_ENABLE(ical-compatibility,
+@@ -164,7 +167,7 @@ if test "$with_xmltok" = "no" && test "$
+ elif test "$with_expat" != "no"; then
+    if test "$with_expat" = "system"; then
+       if test "$have_system_expat" = "yes"; then XMLPARSE_LIBS="-lexpat"
+-      else AC_ERROR(expat.h not found.)
++      else AC_MSG_ERROR(expat.h not found.)
+       fi
+    else # user path
+       XMLPARSE_LIBS="-L$with_expat/lib -lexpat"
+@@ -174,7 +177,7 @@ elif test "$with_expat" != "no"; then
+ else # with_xmltok
+    if test "$with_xmltok" = "system"; then
+       if test "$have_system_xmltok" = "yes"; then XMLPARSE_LIBS="-lxmlparse"
+-      else AC_ERROR(xmltok/xmplarse.h not found.)
++      else AC_MSG_ERROR(xmltok/xmplarse.h not found.)
+       fi
+    elif test "$with_xmltok" != "builtin"; then
+       XMLPARSE_LIBS="-L$with_xmltok/lib -lxmlparse"
+diff -up syncevolution-2.0.0/src/synthesis/src/sysync/scriptcontext.cpp.3 syncevolution-2.0.0/src/synthesis/src/sysync/scriptcontext.cpp
+--- syncevolution-2.0.0/src/synthesis/src/sysync/scriptcontext.cpp.3	2021-02-06 14:57:16.000000000 +0100
++++ syncevolution-2.0.0/src/synthesis/src/sysync/scriptcontext.cpp	2022-09-21 08:11:43.591351269 +0200
+@@ -24,7 +24,8 @@
+ #include "vtimezone.h" // for SETTIMEZONE
+ #include "mimediritemtype.h" // for AlldayCount/MakeAllday
+ #ifdef REGEX_SUPPORT
+-  #include "pcre.h" // for RegEx functions
++  #define PCRE2_CODE_UNIT_WIDTH 8
++  #include "pcre2.h" // for RegEx functions
+ #endif
+ 
+ #include <stdio.h>
+@@ -1323,7 +1324,7 @@ public:
+   // Returns:          > 0 => success; value is the number of elements filled in
+   //                   = 0 => success, but offsets is not big enough
+   //                    -1 => failed to match
+-  //                    -2 => PCRE_ERROR_NULL => did not compile, error reported to aDbgLogger
++  //                    -2 => PCRE2_ERROR_NULL => did not compile, error reported to aDbgLogger
+   //                  < -2 => some kind of unexpected problem
+   static int run_pcre(cAppCharP aRegEx, cAppCharP aSubject, stringSize aSubjLen, stringSize aSubjStart, int *aOutVec, int aOVSize, TDebugLogger *aDbgLogger)
+   {
+@@ -1351,11 +1352,11 @@ public:
+             cAppCharP o = p++;
+             while (*o) {
+               switch (*o) {
+-                case 'i' : options |= PCRE_CASELESS; break;
+-                case 'm' : options |= PCRE_MULTILINE; break;
+-                case 's' : options |= PCRE_DOTALL; break;
+-                case 'x' : options |= PCRE_EXTENDED; break;
+-                case 'U' : options |= PCRE_UNGREEDY; break;
++                case 'i' : options |= PCRE2_CASELESS; break;
++                case 'm' : options |= PCRE2_MULTILINE; break;
++                case 's' : options |= PCRE2_DOTALL; break;
++                case 'x' : options |= PCRE2_EXTENDED; break;
++                case 'U' : options |= PCRE2_UNGREEDY; break;
+               }
+               o++;
+             }
+@@ -1369,23 +1370,43 @@ public:
+       } // while chars in regex
+     } // if regex with delimiter
+     // - compile regex
+-    pcre *regex;
+-    cAppCharP errMsg=NULL;
+-    int errOffs=0;
+-    regex = pcre_compile(aRegEx, options | PCRE_UTF8, &errMsg, &errOffs, NULL);
++    pcre2_code *regex;
++    int errNum=0;
++    size_t errOffs=0;
++    regex = pcre2_compile((PCRE2_SPTR) aRegEx, options | PCRE2_UTF | PCRE2_ZERO_TERMINATED, 0, &errNum, &errOffs, NULL);
+     if (regex==NULL) {
++      PCRE2_UCHAR buffer[256] = { 0 };
++      pcre2_get_error_message(errNum, buffer, sizeof(buffer));
+       // error, display it in log if script logging is on
+       PLOGDEBUGPRINTFX(aDbgLogger,DBG_SCRIPTS+DBG_ERROR,(
+         "RegEx error at pattern pos %d: %s ",
+-        errOffs,
+-        errMsg ? errMsg : "<unknown>"
++        (int) errOffs,
++        *buffer ? (const char *) buffer : "<unknown>"
+       ));
+-      return PCRE_ERROR_NULL; // -2, regexp did not compile
++      return PCRE2_ERROR_NULL; // -2, regexp did not compile
+     }
+     else {
++      pcre2_match_data *match_data;
+       // regExp is ok and can be executed against subject
+-      int r = pcre_exec(regex, NULL, aSubject, aSubjLen, aSubjStart, 0, aOutVec, aOVSize);
+-      pcre_free(regex);
++      match_data = pcre2_match_data_create_from_pattern(regex, NULL);
++      int r = pcre2_match(regex, (PCRE2_SPTR) aSubject, aSubjLen, 0, 0, match_data, NULL);
++      if (r > 0 && aOutVec != NULL) {
++        PCRE2_SIZE *ovector;
++	ovector = pcre2_get_ovector_pointer(match_data);
++	if (ovector[0] > ovector[1]) {
++          aOutVec[0] = ovector[1];
++	  r = 1;
++        } else {
++           int ii;
++           for (ii = 0; ii < r && ii < aOVSize; ii++) {
++              aOutVec[ii] = (int) ovector[ii];
++           }
++           if (r > ii)
++              r = ii;
++        }
++      }
++      pcre2_match_data_free(match_data);
++      pcre2_code_free(regex);
+       return r;
+     }
+   } // run_pcre
+diff -up syncevolution-2.0.0/src/synthesis/src/zlib/zlib.3 syncevolution-2.0.0/src/synthesis/src/zlib/zlib
