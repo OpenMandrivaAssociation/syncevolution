@@ -23,7 +23,7 @@ Version:       2.0.0
 Release:       1
 License:       LGPLv2+
 Group:         Networking/Remote access 
-URL:           http://syncevolution.org/
+URL:           https://syncevolution.org/
 Source0:       http://downloads.syncevolution.org/%{name}/sources/%{name}-%{version}.tar.gz
 Source100:     syncevolution.rpmlintrc
 Patch1:	       syncevolution-1.5.1-libical2.patch
