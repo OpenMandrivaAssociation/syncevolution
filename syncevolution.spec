@@ -31,6 +31,11 @@ Patch2:        syncevolution-1.5.3-autoconf-2.71.patch
 Patch3:        003-pcre2.patch
 Patch4:        004-cpp-curl.patch
 Patch5:        syncevolution-2.0.0-clang.patch
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires: pkgconfig(bluez)
 BuildRequires: boost-devel
 BuildRequires: pkgconfig(cppunit)
