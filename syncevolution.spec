@@ -214,9 +214,10 @@ if [ "$status" -eq 0 ]; then
           sed -n "s/.*dependency_libs='\([^']*\)'.*/\1/p" "$arg" |
             tr ' ' '\n' |
             grep -E '^(-l|-L|-Wl,)' > "$dest" || :
-          # An empty deps file is rejected. A lone newline is accepted.
+          # A newline-only record is one empty linker argument
+          # ("cannot find :"). A zero-length file adds nothing.
           if [ ! -s "$dest" ]; then
-            printf '\n' > "$dest"
+            : > "$dest"
           fi
         }
         # Shared libs are recorded as NAME.so.slibtool.deps. Static libs
