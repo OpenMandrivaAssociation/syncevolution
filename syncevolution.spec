@@ -154,6 +154,29 @@ sed -i '/^AC_LIBTOOL_DLOPEN$/d; s/^AC_PROG_LIBTOOL$/LT_INIT([dlopen])/' configur
 # C23 makes bool a keyword, so the SDK cannot typedef it.
 sed -i 's/#if !defined(__cplusplus) && !defined(__OBJC__)/#if !defined(__cplusplus) \&\& !defined(__OBJC__) \&\& (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L)/' \
 	src/synthesis/src/sysync_SDK/Sources/sync_include.h
+# slibtool prefixes ../ onto an absolute .la, then the link runs from
+# the top directory and cannot open the file. Keep the .la names as
+# make dependencies and pass the built archive and shared libraries.
+python << 'PY'
+from pathlib import Path
+p = Path("configure.ac")
+text = p.read_text()
+old = """    SYNTHESIS_DEP=$SYNTHESIS_LIBS
+
+    # for linking client-test
+    SYNTHESIS_ENGINE=\"$SYNTHESIS_SUBDIR/src/libsynthesis.la\"
+"""
+new = """    SYNTHESIS_DEP=$SYNTHESIS_LIBS
+    SYNTHESIS_LIBS=`printf '%s\\n' \"$SYNTHESIS_LIBS\" | sed \\
+        -e \"s|$SYNTHESIS_SUBDIR/src/libsynthesissdk.la|$SYNTHESIS_SUBDIR/src/.libs/libsynthesissdk.a|g\" \\
+        -e \"s|$SYNTHESIS_SUBDIR/src/libsmltk.la|-L$SYNTHESIS_SUBDIR/src/.libs -lsmltk|g\" \\
+        -e \"s|$SYNTHESIS_SUBDIR/src/libsynthesis.la|-L$SYNTHESIS_SUBDIR/src/.libs -lsynthesis|g\"`
+    SYNTHESIS_ENGINE=\"-L$SYNTHESIS_SUBDIR/src/.libs -lsynthesis\"
+"""
+if old not in text:
+    raise SystemExit("configure.ac synthesis link block not found")
+p.write_text(text.replace(old, new, 1))
+PY
 
 %build
 autoupdate
