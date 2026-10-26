@@ -1,0 +1,35 @@
+diff --git a/src/backends/evolution/EvolutionContactSource.cpp b/src/backends/evolution/EvolutionContactSource.cpp
+index dc5038015bd11f68337bbdba64ccdaa41bba2e34..c33e8d825b634c6fa193a6958ce96c93c7aad24e 100644
+--- a/src/backends/evolution/EvolutionContactSource.cpp
++++ b/src/backends/evolution/EvolutionContactSource.cpp
+@@ -867,8 +867,13 @@ void EvolutionContactSource::readItem(const string &luid, std::string &item, boo
+ #endif
+     }
+ 
++#if EDS_CHECK_VERSION(3,59,1)
++    eptr<char> vcardstr(e_vcard_convert_to_string(&contactptr->parent,
++                                                  E_VCARD_VERSION_30));
++#else
+     eptr<char> vcardstr(e_vcard_to_string(&contactptr->parent,
+                                           EVC_FORMAT_VCARD_30));
++#endif
+     if (!vcardstr) {
+         throwError(SE_HERE, string("failure extracting contact from Evolution " ) + luid);
+     }
+diff --git a/src/backends/evolution/EvolutionContactSource.h b/src/backends/evolution/EvolutionContactSource.h
+index 46ee7199968c92ba1145fdda64ed21e7a01698b0..968395c3a0894f472c7dd05ee4205d63c485d4d9 100644
+--- a/src/backends/evolution/EvolutionContactSource.h
++++ b/src/backends/evolution/EvolutionContactSource.h
+@@ -40,6 +40,12 @@ SE_GOBJECT_TYPE(EBookClientView)
+ #endif
+ SE_GOBJECT_TYPE(EContact)
+ 
++#if EDS_CHECK_VERSION(3,59,1)
++#define EVCardFormat EVCardVersion
++#define EVC_FORMAT_VCARD_21 E_VCARD_VERSION_21
++#define EVC_FORMAT_VCARD_30 E_VCARD_VERSION_30
++#endif
++
+ SE_BEGIN_CXX
+ 
+ class ContactCache;
