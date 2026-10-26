@@ -149,6 +149,9 @@ sed -i '/^ACLOCAL_AMFLAGS/{ /m4-repo/!s/$/ -I m4-repo/ }' Makefile*.am
 # autoupdate rewrites AC_LIBTOOL_DLOPEN into _LT_SET_OPTION, which slibtool
 # does not define, so configure stops on that token.
 sed -i '/^AC_LIBTOOL_DLOPEN$/d; s/^AC_PROG_LIBTOOL$/LT_INIT([dlopen])/' configure.ac
+# C23 makes bool a keyword, so the SDK cannot typedef it.
+sed -i 's/#if !defined(__cplusplus) && !defined(__OBJC__)/#if !defined(__cplusplus) \&\& !defined(__OBJC__) \&\& (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L)/' \
+	src/synthesis/src/sysync_SDK/Sources/sync_include.h
 
 %build
 autoupdate
