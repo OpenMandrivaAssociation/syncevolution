@@ -190,7 +190,7 @@ sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g
 fi
 
 # Synthesis is built by its own GNU libtool. slibtool will not link those
-# .la archives unless each static archive has a .a.slibtool.deps record.
+# .la archives unless each one has a .so.slibtool.deps or .a.slibtool.deps record.
 if [ -f src/build-synthesis/libtool ]; then
 mv src/build-synthesis/libtool src/build-synthesis/libtool.gnu
 cat > src/build-synthesis/libtool << 'EOF'
@@ -206,15 +206,27 @@ if [ "$status" -eq 0 ]; then
         base=${base%.la}
         parent=${arg%/*}
         [ "$parent" = "$arg" ] && parent=.
-        a="$parent/.libs/$base.a"
-        deps="$parent/.libs/$base.a.slibtool.deps"
-        if [ -f "$a" ] && [ ! -e "$deps" ]; then
+        write_deps() {
+          dest=$1
+          if [ -e "$dest" ]; then
+            return
+          fi
           sed -n "s/.*dependency_libs='\([^']*\)'.*/\1/p" "$arg" |
             tr ' ' '\n' |
-            grep -E '^(-l|-L|-Wl,)' > "$deps" || :
-          if [ ! -s "$deps" ]; then
-            printf '\n' > "$deps"
+            grep -E '^(-l|-L|-Wl,)' > "$dest" || :
+          # An empty deps file is rejected. A lone newline is accepted.
+          if [ ! -s "$dest" ]; then
+            printf '\n' > "$dest"
           fi
+        }
+        # Shared libs are recorded as NAME.so.slibtool.deps. Static libs
+        # use NAME.a.slibtool.deps. libsmltk is shared-only, so the .a
+        # record is never created and slibtool then demands .a.disabled.
+        if [ -e "$parent/.libs/$base.so" ]; then
+          write_deps "$parent/.libs/$base.so.slibtool.deps"
+        fi
+        if [ -f "$parent/.libs/$base.a" ]; then
+          write_deps "$parent/.libs/$base.a.slibtool.deps"
         fi
         ;;
     esac
