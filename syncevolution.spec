@@ -146,6 +146,9 @@ Perl utils for use with %{name}.
 
 # use the ac macros in Makefile.am
 sed -i '/^ACLOCAL_AMFLAGS/{ /m4-repo/!s/$/ -I m4-repo/ }' Makefile*.am
+# autoupdate rewrites AC_LIBTOOL_DLOPEN into _LT_SET_OPTION, which slibtool
+# does not define, so configure stops on that token.
+sed -i '/^AC_LIBTOOL_DLOPEN$/d; s/^AC_PROG_LIBTOOL$/LT_INIT([dlopen])/' configure.ac
 
 %build
 autoupdate
