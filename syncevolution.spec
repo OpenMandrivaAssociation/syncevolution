@@ -189,6 +189,42 @@ sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g
         s|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 fi
 
+# Synthesis is built by its own GNU libtool. slibtool will not link those
+# .la archives unless each static archive has a .a.slibtool.deps record.
+if [ -f src/build-synthesis/libtool ]; then
+mv src/build-synthesis/libtool src/build-synthesis/libtool.gnu
+cat > src/build-synthesis/libtool << 'EOF'
+#!/bin/sh
+here=$(dirname "$0")
+"$here/libtool.gnu" "$@"
+status=$?
+if [ "$status" -eq 0 ]; then
+  for arg in "$@"; do
+    case $arg in
+      *.la)
+        base=${arg##*/}
+        base=${base%.la}
+        parent=${arg%/*}
+        [ "$parent" = "$arg" ] && parent=.
+        a="$parent/.libs/$base.a"
+        deps="$parent/.libs/$base.a.slibtool.deps"
+        if [ -f "$a" ] && [ ! -e "$deps" ]; then
+          sed -n "s/.*dependency_libs='\([^']*\)'.*/\1/p" "$arg" |
+            tr ' ' '\n' |
+            grep -E '^(-l|-L|-Wl,)' > "$deps" || :
+          if [ ! -s "$deps" ]; then
+            printf '\n' > "$deps"
+          fi
+        fi
+        ;;
+    esac
+  done
+fi
+exit "$status"
+EOF
+chmod +x src/build-synthesis/libtool
+fi
+
 %make_build V=1
 find . -type d -perm 02755 -exec chmod 0755 '{}' \;
 
