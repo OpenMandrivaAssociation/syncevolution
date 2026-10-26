@@ -151,10 +151,19 @@ sed -i '/^ACLOCAL_AMFLAGS/{ /m4-repo/!s/$/ -I m4-repo/ }' Makefile*.am
 autoupdate
 intltoolize --automake --copy --force
 autoreconf -fiv
+# slibtoolize drops its m4 after aclocal, so LT_INIT stays unexpanded.
+aclocal -I m4 -I m4-repo
+autoconf
+autoheader || :
+automake --add-missing --copy --force-missing
 
 pushd src/synthesis
 autoupdate
 autoreconf -fi
+aclocal
+autoconf
+autoheader || :
+automake --add-missing --copy --force-missing || :
 ./autogen.sh
 popd
 
