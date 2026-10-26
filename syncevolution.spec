@@ -178,8 +178,11 @@ export CXX=g++
     --disable-akonadi --enable-signon=no --enable-goa=no \
     --with-expat=system
 
+# slibtool does not leave a libtool script behind. GNU libtool still does.
+if [ -f libtool ]; then
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g
         s|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+fi
 
 %make_build V=1
 find . -type d -perm 02755 -exec chmod 0755 '{}' \;
