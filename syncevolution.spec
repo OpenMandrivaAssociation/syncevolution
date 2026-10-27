@@ -1,4 +1,5 @@
 %define _disable_lto 1
+%global optflags %{optflags} -Wno-error -Wno-implicit-function-declaration
 
 %define _libexecdir /usr/libexec
 %define _disable_ld_no_undefined 1
