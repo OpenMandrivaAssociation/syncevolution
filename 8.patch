@@ -1,0 +1,63 @@
+From 1936fcc21602faf22149d3dfdb298b1ae270d842 Mon Sep 17 00:00:00 2001
+From: Milan Crha <mcrha@redhat.com>
+Date: Tue, 7 Jul 2026 18:43:58 +0200
+Subject: [PATCH] build: Support libical 4.x
+
+Adapt to API changes in the libical 4.x, still supporting build
+with the 3.x or the 4.x versions.
+---
+ src/backends/activesync/ActiveSyncCalendarSource.cpp | 5 +++++
+ src/backends/evolution/e-cal-check-timezones.c       | 4 ++++
+ src/backends/webdav/CalDAVSource.cpp                 | 5 +++++
+ 3 files changed, 14 insertions(+)
+
+diff --git a/src/backends/activesync/ActiveSyncCalendarSource.cpp b/src/backends/activesync/ActiveSyncCalendarSource.cpp
+index d3222ff6..316138e2 100644
+--- a/src/backends/activesync/ActiveSyncCalendarSource.cpp
++++ b/src/backends/activesync/ActiveSyncCalendarSource.cpp
+@@ -400,6 +400,11 @@ ActiveSyncCalendarSource::EventCache::iterator ActiveSyncCalendarSource::EventCa
+     return end();
+ }
+ 
++#if ICAL_CHECK_VERSION(4, 0, 0)
++#define icalcomponent_new_clone(_c) icalcomponent_clone(_c)
++#define icalparameter_new_clone(_p) icalparameter_clone(_p)
++#endif
++
+ SyncSourceRaw::InsertItemResult ActiveSyncCalendarSource::insertItem(const std::string &luid, const std::string &item)
+ {
+     StringPair ids = splitLUID(luid);
+diff --git a/src/backends/evolution/e-cal-check-timezones.c b/src/backends/evolution/e-cal-check-timezones.c
+index 7661b4f6..7b2eeee8 100644
+--- a/src/backends/evolution/e-cal-check-timezones.c
++++ b/src/backends/evolution/e-cal-check-timezones.c
+@@ -173,6 +173,10 @@ static void patch_tzids(icalcomponent *subcomp,
+     g_free(tzid);
+ }
+ 
++#if ICAL_CHECK_VERSION(4, 0, 0)
++#define icalcomponent_new_clone(_c) icalcomponent_clone(_c)
++#endif
++
+ static void addsystemtz(gpointer key,
+                         gpointer value,
+                         gpointer user_data)
+diff --git a/src/backends/webdav/CalDAVSource.cpp b/src/backends/webdav/CalDAVSource.cpp
+index c9de83a9..8fc0842c 100644
+--- a/src/backends/webdav/CalDAVSource.cpp
++++ b/src/backends/webdav/CalDAVSource.cpp
+@@ -392,6 +392,11 @@ void CalDAVSource::setAllSubItems(const SubRevisionMap_t &revisions)
+     }
+ }
+ 
++#if ICAL_CHECK_VERSION(4, 0, 0)
++#define icalcomponent_new_clone(_c) icalcomponent_clone(_c)
++#define icalparameter_new_clone(_p) icalparameter_clone(_p)
++#endif
++
+ SubSyncSource::SubItemResult CalDAVSource::insertSubItem(const std::string &luid, const std::string &callerSubID,
+                                                          const std::string &item)
+ {
+-- 
+GitLab
+

@@ -34,6 +34,7 @@ Patch4:        004-cpp-curl.patch
 Patch5:        syncevolution-2.0.0-clang.patch
 # evolution-data-server 3.59 renamed EVCardFormat to EVCardVersion.
 Patch6:        syncevolution-2.0.0-eds-3.59.patch
+Patch7:		https://gitlab.freedesktop.org/SyncEvolution/syncevolution/-/merge_requests/8.patch
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool-base
